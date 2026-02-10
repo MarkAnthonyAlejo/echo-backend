@@ -10,39 +10,32 @@ app.use(cors());
 app.use(express.json());
 
 // Initialize OpenAI
-// Note: Ensure your .env file has OPENAI_API_KEY=sk-....
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-/**
- * POST /api/chat
- * Primary endpoint for the AI Assessment - Now fully integrated with OpenAI
- */
 app.post("/api/chat", async (req, res) => {
   try {
     const { prompt } = req.body;
 
-    // 1. Validate input
+    //Validate input
     if (!prompt) {
       return res.status(400).json({ error: "Prompt is required" });
     }
 
-    // 2. Real OpenAI Request
-    // This will now use your real key and the gpt-3.5-turbo model
+    //OpenAI request
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [{ role: "user", content: prompt }],
       temperature: 0.7, // Adds a touch of creativity
     });
 
-    // 3. Send the AI response back to your React Frontend
     res.json({ response: completion.choices[0].message.content });
   } catch (error) {
-    // 4. Enhanced Error Logging for Debugging
+    //Error logging
     console.error("OpenAI API Error:", error.message);
 
-    // If it's a billing/quota error, let the dev know
+    // Billing/quota error
     if (error.status === 429) {
       return res.status(429).json({
         error: "OpenAI Quota exceeded. Please check your billing/credits.",
@@ -55,7 +48,7 @@ app.post("/api/chat", async (req, res) => {
   }
 });
 
-// Basic Health Check
+// Basic health check
 app.get("/test", (req, res) => {
   res.json({ message: "Backend is alive and healthy!" });
 });
