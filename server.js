@@ -1,3 +1,6 @@
+//Note! This is a basic backend that if needed to be refactored it can,
+//at its current state it is not organized.
+
 const express = require("express");
 const cors = require("cors");
 const { OpenAI } = require("openai");
